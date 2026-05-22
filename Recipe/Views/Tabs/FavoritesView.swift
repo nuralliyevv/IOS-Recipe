@@ -33,12 +33,60 @@ struct FavoritesView: View {
                     NavigationLink {
                         RecipeDetailView(recipe: recipe)
                     } label: {
-                        HorizontalRecipeRow(recipe: recipe)
+                        FavoriteRecipeRow(recipe: recipe)
                     }
+                    .buttonStyle(.plain)
                 }
                 .listStyle(.plain)
             }
         }
         .navigationTitle("Favorites")
+    }
+}
+
+private struct FavoriteRecipeRow: View {
+    @EnvironmentObject private var viewModel: AppViewModel
+
+    let recipe: Recipe
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ZStack(alignment: .topTrailing) {
+                RecipeImageView(recipe: recipe)
+                    .frame(width: 92, height: 92)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+
+                Button {
+                    viewModel.toggleFavorite(recipe)
+                } label: {
+                    Image(systemName: "heart.fill")
+                        .font(.caption)
+                        .padding(7)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Circle())
+                        .foregroundStyle(.red)
+                }
+                .padding(6)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(recipe.name)
+                    .font(.headline)
+                    .lineLimit(2)
+
+                if let category = recipe.category, !category.isEmpty {
+                    Text(category)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Text("Tap heart to remove")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+        }
+        .padding(.vertical, 4)
     }
 }

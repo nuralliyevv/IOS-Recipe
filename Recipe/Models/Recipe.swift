@@ -1,13 +1,6 @@
-//
-//  Recipe.swift
-//  Recipe
-//
-//  Created by Мирас Нуралиев on 22.05.2026.
-//
-
 import Foundation
 
-struct Recipe: Identifiable, Equatable {
+struct Recipe: Identifiable, Equatable, Codable {
     let id: String
     let name: String
     let imageURL: String?
@@ -22,8 +15,8 @@ struct Recipe: Identifiable, Equatable {
     }
 }
 
-struct Ingredient: Identifiable, Equatable {
-    let id = UUID()
+struct Ingredient: Identifiable, Equatable, Codable {
+    var id = UUID()
     let name: String
     let measure: String
     var isChecked: Bool = false

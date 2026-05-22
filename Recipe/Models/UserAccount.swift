@@ -7,6 +7,7 @@
 
 import Foundation
 
-struct UserAccount {
+struct UserAccount: Codable, Equatable {
     let email: String
+    let password: String
 }

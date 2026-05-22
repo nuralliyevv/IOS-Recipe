@@ -11,6 +11,7 @@ struct SearchView: View {
     @EnvironmentObject private var viewModel: AppViewModel
 
     @State private var searchText = ""
+    @State private var searchTask: Task<Void, Never>?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -21,22 +22,18 @@ struct SearchView: View {
 
                     TextField("Search recipes", text: $searchText)
                         .textInputAutocapitalization(.never)
-                        .onSubmit {
-                            Task {
-                                await viewModel.searchRecipes(query: searchText)
-                            }
-                        }
                 }
                 .padding(12)
                 .background(.gray.opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: 14))
 
                 Button("Cancel") {
+                    searchTask?.cancel()
                     searchText = ""
                     viewModel.searchResults = []
 
                     Task {
-                        await viewModel.loadRecommendations()
+                        await viewModel.loadRecommendations(forceReload: true)
                     }
                 }
             }
@@ -58,7 +55,10 @@ struct SearchView: View {
                         Button {
                             viewModel.toggleFavorite(recipe)
                         } label: {
-                            Label("Favorite", systemImage: "heart")
+                            Label(
+                                viewModel.isFavorite(recipe) ? "Remove" : "Favorite",
+                                systemImage: viewModel.isFavorite(recipe) ? "heart.slash" : "heart"
+                            )
                         }
                         .tint(.orange)
                     }
@@ -67,15 +67,21 @@ struct SearchView: View {
             }
         }
         .navigationTitle("Search")
-        .toolbar {
-            Button("Search") {
-                Task {
-                    await viewModel.searchRecipes(query: searchText)
-                }
-            }
-        }
         .task {
             await viewModel.loadRecommendations()
+        }
+        .onChange(of: searchText) { newValue in
+            searchTask?.cancel()
+
+            searchTask = Task {
+                try? await Task.sleep(nanoseconds: 350_000_000)
+
+                if Task.isCancelled {
+                    return
+                }
+
+                await viewModel.searchRecipes(query: newValue)
+            }
         }
     }
 }

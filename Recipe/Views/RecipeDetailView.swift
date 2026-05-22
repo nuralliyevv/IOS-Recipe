@@ -12,13 +12,6 @@ struct RecipeDetailView: View {
 
     let recipe: Recipe
 
-    @State private var ingredients: [Ingredient]
-
-    init(recipe: Recipe) {
-        self.recipe = recipe
-        _ingredients = State(initialValue: recipe.ingredients)
-    }
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
@@ -55,18 +48,25 @@ struct RecipeDetailView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
+                if !viewModel.isFavorite(recipe) {
+                    Text("Add this recipe to favorites to save ingredient checkboxes.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .padding(.vertical, 4)
+                }
+
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Ingredients")
                         .font(.title2)
                         .fontWeight(.bold)
 
-                    ForEach($ingredients) { $ingredient in
+                    ForEach(recipe.ingredients) { ingredient in
                         Button {
-                            ingredient.isChecked.toggle()
+                            viewModel.toggleIngredientChecked(recipe: recipe, ingredient: ingredient)
                         } label: {
                             HStack(alignment: .top) {
-                                Image(systemName: ingredient.isChecked ? "checkmark.square.fill" : "square")
-                                    .foregroundStyle(ingredient.isChecked ? .orange : .secondary)
+                                Image(systemName: viewModel.isIngredientChecked(recipe: recipe, ingredient: ingredient) ? "checkmark.square.fill" : "square")
+                                    .foregroundStyle(viewModel.isIngredientChecked(recipe: recipe, ingredient: ingredient) ? .orange : .secondary)
 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(ingredient.name)
