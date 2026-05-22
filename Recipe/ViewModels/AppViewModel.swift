@@ -154,6 +154,30 @@ final class AppViewModel: ObservableObject {
         saveCurrentUserData()
     }
 
+    func updateLocalRecipe(_ updatedRecipe: Recipe) {
+        if let index = addedRecipes.firstIndex(where: { $0.id == updatedRecipe.id }) {
+            addedRecipes[index] = updatedRecipe
+        }
+
+        if let favoriteIndex = favoriteRecipes.firstIndex(where: { $0.id == updatedRecipe.id }) {
+            favoriteRecipes[favoriteIndex] = updatedRecipe
+        }
+
+        saveCurrentUserData()
+    }
+
+    func deleteLocalRecipe(_ recipe: Recipe) {
+        addedRecipes.removeAll { $0.id == recipe.id }
+        favoriteRecipes.removeAll { $0.id == recipe.id }
+        checkedIngredientsByRecipeID[recipe.id] = nil
+
+        saveCurrentUserData()
+    }
+    
+    func isMyRecipe(_ recipe: Recipe) -> Bool {
+        addedRecipes.contains(where: { $0.id == recipe.id })
+    }
+
     // MARK: - Favorites
 
     func toggleFavorite(_ recipe: Recipe) {
