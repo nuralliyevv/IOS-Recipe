@@ -43,3 +43,10 @@ struct HomeView: View {
         }
     }
 }
+
+#Preview {
+    NavigationStack {
+        HomeView()
+            .environmentObject(AppViewModel())
+    }
+}

@@ -138,3 +138,23 @@ struct RecipeDetailView: View {
             .filter { !$0.isEmpty }
     }
 }
+
+#Preview {
+    NavigationStack {
+        RecipeDetailView(
+            recipe: Recipe(
+                id: "1",
+                name: "Sample Recipe",
+                imageURL: nil,
+                category: "Test",
+                area: "USA",
+                instructions: "Step one. Step two. Step three.",
+                ingredients: [
+                    Ingredient(name: "Chicken", measure: "1 lb"),
+                    Ingredient(name: "Salt", measure: "1 tsp")
+                ]
+            )
+        )
+        .environmentObject(AppViewModel())
+    }
+}

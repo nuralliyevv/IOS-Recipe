@@ -101,27 +101,23 @@ final class AppViewModel: ObservableObject {
         errorMessage = nil
     }
 
-    // MARK: - Recipes
+    // MARK: - Home Recipes
 
     func loadHomeRecipes() async {
-        guard homeRecipes.isEmpty || homeRecipes == addedRecipes else { return }
+        guard homeRecipes.isEmpty else { return }
 
         isLoadingHome = true
-
-        let randomRecipes = await RecipeAPIService.shared.randomRecipes(count: 12)
-        homeRecipes = addedRecipes + randomRecipes
-
+        homeRecipes = await RecipeAPIService.shared.randomRecipes(count: 12)
         isLoadingHome = false
     }
 
     func reloadHomeRecipes() async {
         isLoadingHome = true
-
-        let randomRecipes = await RecipeAPIService.shared.randomRecipes(count: 12)
-        homeRecipes = addedRecipes + randomRecipes
-
+        homeRecipes = await RecipeAPIService.shared.randomRecipes(count: 12)
         isLoadingHome = false
     }
+
+    // MARK: - Search
 
     func searchRecipes(query: String) async {
         let cleanQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -151,9 +147,10 @@ final class AppViewModel: ObservableObject {
         searchResults = await RecipeAPIService.shared.randomRecipes(count: 8)
     }
 
+    // MARK: - My Recipes
+
     func addLocalRecipe(_ recipe: Recipe) {
         addedRecipes.insert(recipe, at: 0)
-        homeRecipes.insert(recipe, at: 0)
         saveCurrentUserData()
     }
 
@@ -250,7 +247,7 @@ final class AppViewModel: ObservableObject {
         favoriteRecipes = storedData.favoriteRecipes
         addedRecipes = storedData.addedRecipes
         checkedIngredientsByRecipeID = storedData.checkedIngredientsByRecipeID
-        homeRecipes = storedData.addedRecipes
+        homeRecipes = []
         searchResults = []
     }
 

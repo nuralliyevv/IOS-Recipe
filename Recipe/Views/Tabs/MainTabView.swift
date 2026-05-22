@@ -48,3 +48,8 @@ struct MainTabView: View {
         .tint(.orange)
     }
 }
+
+#Preview {
+    MainTabView()
+        .environmentObject(AppViewModel())
+}
